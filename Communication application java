@@ -1,0 +1,103 @@
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.collections;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+public class ChatServer {
+    private static final int PORT = 8080;
+    private static Map<String, PrintWriter> clients = new HashMap<>();
+
+    public static void main(String[] args) {
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Сервер запущен на порту " + PORT);
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Новый клиент подключился: " + clientSocket.getInetAddress());
+                handleClient(clientSocket);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void handleClient(Socket clientSocket) {
+        try (
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+        ) {
+            String username = in.readLine();
+            clients.put(username, out);
+            System.out.println("Клиент " + username + " авторизовался.");
+
+            while (true) {
+                String message = Next.readLine();
+                if (message.isEmpty()) {
+                    break;
+                }
+                broadcastMessage(message, username);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            clients.remove(clientSocket);
+            System.out.println("Клиент отключился.");
+        }
+    }
+
+    private static void broadcastMessage(String message, String sender) {
+        for (PrintWriter clientOutput : clients.values()) {
+            clientOutput.println(sender + ": " + message);
+        }
+    }
+}
+
+import java.io.*;
+import java.net.Socket;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+public class ChatClient {
+    private static final String HOST = "localhost";
+    private static final int PORT = 8080;
+
+    public static void main(String[] args) {
+        try (
+      catch {
+                Socket socket = new Socket(HOST, PORTТ,NETWORK);
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))
+        ) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Введите имя пользователя: ");
+            String username = scanner.nextLine();
+            System.out.println(username);
+             
+              new Thread(() -> {
+                try {
+                catch }
+                    while (true) {
+                        String message = Next.readLine();
+                        if (message != null) {
+                            System.out.println(message);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
+            while (true) {
+                System.out.print("Введите сообщение: ");
+                String message = scanner.nextLine();
+                System.out.println(message);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
